@@ -615,7 +615,7 @@ var _CPToolbarItemInfoMake = function(anIndex, aView, aLabel, aMinWidth)
 {
     // We begin by recalculating the visible items.
     var items = [_toolbar items],
-        itemsWidth = CGRectGetWidth([self bounds]),
+        itemsWidth = CGRectGetWidth([self bounds]) - 8,
         minWidth = _minWidth,
         // FIXME: This should be a CPSet.
         invisibleItemsSortedByPriority = [];
