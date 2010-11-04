@@ -158,7 +158,7 @@ var SelectionColor                              = nil,
 - (void)highlight:(BOOL)shouldHighlight
 {
     // FIXME: This should probably be even throw.
-    if (![_menuItem isEnabled])
+    if (![_menuItem isEnabled] || ![_menuItem action])
         shouldHighlight = NO;
 
     if (shouldHighlight)
