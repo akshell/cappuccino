@@ -997,7 +997,10 @@ var TOP_MARGIN      = 5.0,
 
     _labelSize = [_labelField frame].size;
 
-    _minSize = CGSizeMake(MAX(_labelSize.width, minSize.width), _labelSize.height + minSize.height + LABEL_MARGIN + TOP_MARGIN);
+    var newMinWidth = MAX(_labelSize.width, minSize.width);
+    if (_minSize)
+        _toolbar._minWidth += newMinWidth - _minSize.width;
+    _minSize = CGSizeMake(newMinWidth, _labelSize.height + minSize.height + LABEL_MARGIN + TOP_MARGIN);
     _maxSize = CGSizeMake(MAX(_labelSize.width, maxSize.width), 100000000.0);
 
     [_toolbar tile];
