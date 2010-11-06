@@ -100,6 +100,8 @@ var CPToolbarConfigurationsByIdentifier = nil;
     CPArray                 _items;
     CPArray                 _itemsSortedByVisibilityPriority;
 
+    CPToolbarItem           _selectedItem;
+
     CPView                  _toolbarView;
     CPWindow                _window;
 }
@@ -415,6 +417,34 @@ var CPToolbarConfigurationsByIdentifier = nil;
     }
 }
 
+- (CPString)selectedItemIdentifier
+{
+    return [_selectedItem itemIdentifier];
+}
+
+- (void)setSelectedItemIdentifier:(CPString)itemIdentifier
+{
+    if (_selectedItem)
+        [_toolbarView deselectItem:_selectedItem];
+
+    _selectedItem = nil;
+
+    if (itemIdentifier)
+    {
+        for (var index = 0; index < _items.length; ++index)
+        {
+            if ([_items[index] itemIdentifier] === itemIdentifier)
+            {
+                _selectedItem = _items[index];
+                [_toolbarView selectItem:_selectedItem];
+                break;
+            }
+        }
+    }
+
+    [_toolbarView tile];
+}
+
 @end
 
 
@@ -506,7 +536,10 @@ var CPToolbarIdentifierKey              = @"CPToolbarIdentifierKey",
 
 var _CPToolbarViewBackgroundColor = nil,
     _CPToolbarViewExtraItemsImage = nil,
-    _CPToolbarViewExtraItemsAlternateImage = nil;
+    _CPToolbarViewExtraItemsAlternateImage = nil,
+    _CPToolbarViewSelectedItemBackgroundColor = nil,
+    _CPToolbarViewSelectedItemLeftEdgeImage = nil,
+    _CPToolbarViewSelectedItemRigthEdgeImage = nil;
 
 var TOOLBAR_TOP_MARGIN          = 5.0,
     TOOLBAR_ITEM_MARGIN         = 10.0,
@@ -535,6 +568,9 @@ var _CPToolbarItemInfoMake = function(anIndex, aView, aLabel, aMinWidth)
     CPColor             _labelColor;
     CPColor             _labelShadowColor;
 
+    CPImageView         _selectedItemLeftEdgeImageView;
+    CPImageView         _selectedItemRightEdgeImageView;
+
     float               _minWidth;
 
     BOOL                _FIXME_isHUD;
@@ -550,6 +586,12 @@ var _CPToolbarItemInfoMake = function(anIndex, aView, aLabel, aMinWidth)
     _CPToolbarViewExtraItemsImage = [[CPImage alloc] initWithContentsOfFile: [bundle pathForResource:"_CPToolbarView/_CPToolbarViewExtraItemsImage.png"] size: CPSizeMake(10.0, 15.0)];
 
     _CPToolbarViewExtraItemsAlternateImage = [[CPImage alloc] initWithContentsOfFile: [bundle pathForResource:"_CPToolbarView/_CPToolbarViewExtraItemsAlternateImage.png"] size:CGSizeMake(10.0, 15.0)];
+
+    _CPToolbarViewSelectedItemBackgroundColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"_CPToolbarView/_CPToolbarViewSelectedItemBackground.png"] size:CPSizeMake(1.0, 58.0)]];
+
+    _CPToolbarViewSelectedItemLeftEdgeImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"_CPToolbarView/_CPToolbarViewSelectedItemLeftEdgeImage.png"] size:CPSizeMake(5.0, 58.0)];
+
+    _CPToolbarViewSelectedItemRightEdgeImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"_CPToolbarView/_CPToolbarViewSelectedItemRightEdgeImage.png"] size:CPSizeMake(5.0, 58.0)];
 }
 
 - (id)initWithFrame:(CGRect)aFrame
@@ -571,6 +613,12 @@ var _CPToolbarItemInfoMake = function(anIndex, aView, aLabel, aMinWidth)
         [[_additionalItemsButton menu] setAutoenablesItems:NO];
 
         [_additionalItemsButton setAlternateImage:_CPToolbarViewExtraItemsAlternateImage];
+
+        _selectedItemLeftEdgeImageView = [[CPImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 5.0, 58.0)];
+        [_selectedItemLeftEdgeImageView setImage:_CPToolbarViewSelectedItemLeftEdgeImage];
+
+        _selectedItemRightEdgeImageView = [[CPImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 5.0, 58.0)];
+        [_selectedItemRightEdgeImageView setImage:_CPToolbarViewSelectedItemRightEdgeImage];
     }
 
     return self;
@@ -726,16 +774,35 @@ var _CPToolbarItemInfoMake = function(anIndex, aView, aLabel, aMinWidth)
     // Now that all the visible items are the correct width, give them their final frames.
     var index = 0,
         count = _visibleItems.length,
+        hasSelectedItem = NO,
         x = TOOLBAR_ITEM_MARGIN;
 
     for (; index < count; ++index)
     {
-        var view = [self viewForItem:_visibleItems[index]],
+        var item = _visibleItems[index],
+            view = [self viewForItem:item],
             viewWidth = CGRectGetWidth([view frame]);
 
         [view setFrame:CGRectMake(x, 0.0, viewWidth, height)];
 
+        if (item === _toolbar._selectedItem)
+        {
+            hasSelectedItem = YES;
+
+            [_selectedItemLeftEdgeImageView setFrameOrigin:CGPointMake(x - 5.0, 0.0)];
+            [self addSubview:_selectedItemLeftEdgeImageView];
+
+            [_selectedItemRightEdgeImageView setFrameOrigin:CGPointMake(x + viewWidth, 0.0)];
+            [self addSubview:_selectedItemRightEdgeImageView];
+        }
+
         x += viewWidth + TOOLBAR_ITEM_MARGIN;
+    }
+
+    if (!hasSelectedItem)
+    {
+        [_selectedItemLeftEdgeImageView removeFromSuperview];
+        [_selectedItemRightEdgeImageView removeFromSuperview];
     }
 
     var needsAdditionalItemsButton = NO;
@@ -842,6 +909,16 @@ var _CPToolbarItemInfoMake = function(anIndex, aView, aLabel, aMinWidth)
     }
 
     [self tile];
+}
+
+- (void)selectItem:(CPToolbarItem)item
+{
+    [[self viewForItem:item] setBackgroundColor:_CPToolbarViewSelectedItemBackgroundColor];
+}
+
+- (void)deselectItem:(CPToolbarItem)item
+{
+    [[self viewForItem:item] setBackgroundColor:nil];
 }
 
 @end
