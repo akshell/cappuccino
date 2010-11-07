@@ -3378,7 +3378,7 @@ CPTableViewFirstColumnOnlyAutoresizingStyle = 5;
     var newSelection,
         shouldExtendSelection = NO;
     // If cmd/ctrl was held down XOR the old selection with the proposed selection
-    if ([self mouseDownFlags] & (CPCommandKeyMask | CPControlKeyMask | CPAlternateKeyMask))
+    if ([self mouseDownFlags] & (CPCommandKeyMask | CPControlKeyMask))
     {
         if ([_selectedRowIndexes containsIndex:aRow])
         {
