@@ -540,6 +540,10 @@ var _CPEventPeriodicEventPeriod         = 0,
     if (_characters === CPNewlineCharacter || _characters === CPCarriageReturnCharacter)
         return CPNewlineCharacter === aKeyEquivalent || CPCarriageReturnCharacter === aKeyEquivalent;
 
+    // FIXME: Generic solution is needed
+    if (_characters === "`" && (_modifierFlags & CPAlternateKeyMask))
+        return aKeyEquivalent === "n";
+
     return [_characters caseInsensitiveCompare:aKeyEquivalent] === CPOrderedSame;
 }
 
