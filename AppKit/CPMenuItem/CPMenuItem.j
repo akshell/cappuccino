@@ -607,7 +607,7 @@ CPControlKeyMask
             string = "⌥" + string;
 
         if (_keyEquivalentModifierMask & CPControlKeyMask)
-            string = "^" + string;
+            string = "⌃" + string;
     }
     else
     {
