@@ -541,8 +541,17 @@ var _CPEventPeriodicEventPeriod         = 0,
         return CPNewlineCharacter === aKeyEquivalent || CPCarriageReturnCharacter === aKeyEquivalent;
 
     // FIXME: Generic solution is needed
-    if (_characters === "`" && (_modifierFlags & CPAlternateKeyMask))
-        return aKeyEquivalent === "n";
+    switch (_characters)
+    {
+    case "`":
+        if (_modifierFlags & CPAlternateKeyMask)
+            return aKeyEquivalent === "n";
+        break;
+    case CPUpArrowFunctionKey:
+        return aKeyEquivalent === "↑";
+    case CPDownArrowFunctionKey:
+        return aKeyEquivalent === "↓";
+    }
 
     return [_characters caseInsensitiveCompare:aKeyEquivalent] === CPOrderedSame;
 }
