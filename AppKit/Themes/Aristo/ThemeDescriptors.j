@@ -737,7 +737,6 @@ var themedButtonValues = nil,
 
         [@"text-color",         [CPColor colorWithCalibratedWhite:51.0 / 255.0 alpha:1.0], CPThemeStateTableDataView],
         [@"text-color",         [CPColor whiteColor],               CPThemeStateTableDataView | CPThemeStateSelectedTableDataView],
-        [@"font",               [CPFont boldSystemFontOfSize:12.0], CPThemeStateTableDataView | CPThemeStateSelectedTableDataView],
 
         [@"text-color",         [CPColor colorWithCalibratedWhite:125.0 / 255.0 alpha:1.0], CPThemeStateTableDataView | CPThemeStateGroupRow],
         [@"text-color",         [CPColor colorWithCalibratedWhite:1.0 alpha:1.0], CPThemeStateTableDataView | CPThemeStateGroupRow | CPThemeStateSelectedTableDataView],
