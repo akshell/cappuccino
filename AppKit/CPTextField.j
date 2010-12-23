@@ -697,6 +697,9 @@ CPTextFieldStatePlaceholder = CPThemeState("placeholder");
     if ([note object] != self)
         return;
 
+    var inputElement = [self _inputElement];
+    inputElement.onpaste = inputElement.oncut = null;
+
     [[CPNotificationCenter defaultCenter] postNotification:note];
 }
 
@@ -705,6 +708,38 @@ CPTextFieldStatePlaceholder = CPThemeState("placeholder");
     // this looks to prevent false propagation of notifications for other objects
     if ([note object] != self)
         return;
+
+    var inputElement = [self _inputElement];
+
+    inputElement.onpaste = function(event)
+    {
+        var originalValue = [self stringValue],
+            selectedRange = [self selectedRange],
+            pasteString = event.clipboardData.getData("Text"),
+            newValue = [originalValue stringByReplacingCharactersInRange:selectedRange withString:pasteString];
+
+        if (originalValue !== newValue)
+        {
+            [self setStringValue:newValue];
+            [self textDidChange:[CPNotification notificationWithName:CPControlTextDidChangeNotification object:self userInfo:nil]];
+        }
+
+        [self setSelectedRange:CPMakeRange(selectedRange.location + pasteString.length, 0)];
+
+        event.preventDefault();
+    };
+
+    inputElement.oncut = function(event)
+    {
+        var selectedRange = [self selectedRange];
+
+        setTimeout(function ()
+        {
+            [self setStringValue:[[self stringValue] stringByReplacingCharactersInRange:selectedRange withString:""]];
+            [self setSelectedRange:CPMakeRange(selectedRange.location, 0)];
+            [self textDidChange:[CPNotification notificationWithName:CPControlTextDidChangeNotification object:self userInfo:nil]];
+        }, 0);
+    }
 
     [[CPNotificationCenter defaultCenter] postNotification:note];
 }
