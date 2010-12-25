@@ -551,6 +551,10 @@ var _CPEventPeriodicEventPeriod         = 0,
         return aKeyEquivalent === "↑";
     case CPDownArrowFunctionKey:
         return aKeyEquivalent === "↓";
+    case CPLeftArrowFunctionKey:
+        return aKeyEquivalent === "←";
+    case CPRightArrowFunctionKey:
+        return aKeyEquivalent === "→";
     }
 
     return [_characters caseInsensitiveCompare:aKeyEquivalent] === CPOrderedSame;
