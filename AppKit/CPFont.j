@@ -27,11 +27,10 @@
 
 
 var _CPFonts                = {},
-    _CPFontSystemFontFace   = @"Arial, sans-serif",
-    _CPWrapRegExp           = new RegExp("\\s*,\\s*", "g");
+    _CPFontSystemFontFace   = @"Arial, sans-serif";
 
 
-#define _CPCreateCSSString(aName, aSize, isBold) (isBold ? @"bold " : @"") + ROUND(aSize) + @"px " + ((aName === _CPFontSystemFontFace) ? aName : (@"\"" + aName.replace(_CPWrapRegExp, '", "') + @"\", " + _CPFontSystemFontFace))
+#define _CPCreateCSSString(aName, aSize, isBold) (isBold ? @"bold " : @"") + ROUND(aSize) + @"px " + aName
 #define _CPCachedFont(aName, aSize, isBold) _CPFonts[_CPCreateCSSString(aName, aSize, isBold)]
 
 /*!
